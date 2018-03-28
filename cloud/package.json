@@ -1,0 +1,29 @@
+{
+  "name": "cloud",
+  "version": "1.0.0",
+  "description": "How to install and run nodejs with TypeScript code ==================================================",
+  "main": "index.js",
+  "dependencies": {
+    "@types/body-parser": "^1.16.8",
+    "@types/morgan": "^1.7.35",
+    "amqplib": "^0.5.2",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0",
+    "tslint": "^5.9.1",
+    "typings": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/debug": "0.0.30",
+    "@types/express": "^4.11.0",
+    "@types/node": "^8.5.2",
+    "nodemon": "^1.14.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "./node_modules/.bin/nodemon build/application.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
