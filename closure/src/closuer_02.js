@@ -1,3 +1,10 @@
+/**
+ * from: http://javascriptissexy.com/understand-javascript-closures-with-ease/
+ *
+ * Closures store references to the outer function’s variables; they do not store the actual value.
+ *  Closures get more interesting when the value of the outer function’s variable changes before the closure is called.
+ * And this powerful feature can be harnessed in creative ways, such as this private variables example first demonstrated by Douglas Crockford: 
+ */
 
 function celebrityID(a, b) {
     console.log("celebrityID called ...");
@@ -22,6 +29,7 @@ function celebrityID(a, b) {
 }
 
 var mj = celebrityID("Michel", "Jekson");
+console.log("going to call to mj.getId and mj.setId");
 console.log(mj.getId());      // 999​
 console.log(mj.setId(567));   // changes the outer function's variable​
 console.log(mj.getId());      // 567: It returns the updated celebrityId variable
