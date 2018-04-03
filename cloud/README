@@ -30,6 +30,6 @@ to send json post request:
 echo '{ "sequence": 1, "user": {"name": "john"} }' | http :3000/web_srv
 
 run first time:
---------------0
+---------------
 	./node_modules/tslint/bin/tslint --init
 	./node_modules/tslint/bin/tslint -c tslint.json 'src/**/*.ts'
