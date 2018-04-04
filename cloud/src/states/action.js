@@ -14,7 +14,7 @@ class Action {
         console.log("Action:constructor: constructor is call, name = " + this.name);
     }
 
-    name() {
+    getName() {
         return this.name;
     }
 

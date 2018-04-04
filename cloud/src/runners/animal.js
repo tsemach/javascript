@@ -6,7 +6,7 @@ class Animal {
         this.name = name;
     }
 
-    current() {
+    getName() {
         console.log("Animal:current is called");
     }
 }
