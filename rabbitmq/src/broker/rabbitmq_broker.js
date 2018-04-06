@@ -32,19 +32,17 @@ class Broker {
 
     initConsumeCB(queue) {
         console.log("initConsumeCB: queue = " + JSON.stringify(queue));
-        console.log("initConsumeCB: queue = " + queue[0]);
         function logMessage(msg) {
             console.log(" [x] %s:'%s'",
                 msg.fields.routingKey,
                 msg.content.toString());
+            console.log("msg = %s", JSON.stringify(msg));
         }
         return this.ch.consume(queue[0], logMessage, {noAck: true});
     }
 
     initBindCB(b) {
         return this.ch.bindQueue(b.target, b.exchange, b.keys).then(() => {return b.target});
-
-        //return this.ch.bindQueue(b.target, b.exchange, b.keys);
     }
 
     initQueuesCB() {
@@ -83,91 +81,11 @@ class Broker {
             conn.close();
         });
 
-        //---------------------------------------------------------------------------------------------------
-        console.log(this);
-        // let initExchanges = function(ch) {
-        //     this.ch = ch;
-        //     config.exchanges.map((ex) => {console.log("got ex = %s", JSON.stringify(ex))});
-        //
-        //     return Promise.all(config.exchanges.map((ex) => {ch.assertExchange(ex.name, ex.type, ex.options)}))
-        //         .then(() => {
-        //             console.log("init exchange ok");
-        //         })
-        //         .catch((err) => {console.log(err)});
-        // };
         let isok = conn.createChannel().then(this.initExchangesCB.bind(this));
 
-        isok.then(this.initQueuesCB.bind(this));
-
-
-
-        // ok = ok.then(function(qok) {
-        //     let queue = qok.queue;
-        //
-        //     return all(keys.map(function(rk) {
-        //         ch.bindQueue(queue, ex, rk);
-        //     })).then(function() {
-        //         return queue;
-        //     });
-        // });
-
-
-        //---------------------------------------------------------------------------------------------------
-
-        // this is working!!
-        //--------------------------------------------------------------------------------------------------
-        // conn.createChannel().then((ch) => {
-        //     console.log(config.exchanges);
-        //     config.exchanges.map((ex) => {console.log("got ex = %s", JSON.stringify(ex))});
-        //
-        //     Promise.all(config.exchanges.map((ex) => {ch.assertExchange(ex.name, ex.type, ex.options)}))
-        //         .then(() => {
-        //             console.log("init exchange ok");
-        //         })
-        //         .catch((err) => {console.log(err)});
-        // });
-        //--------------------------------------------------------------------------------------------------
-    }
+        return isok.then(this.initQueuesCB.bind(this));
+     }
 }
 
 new Broker().init();
 
-if (0) {
-    amqp.connect('amqp://172.17.0.2').then(function(conn) {
-        process.once('SIGINT', function() {
-            conn.close();
-        });
-
-        return conn.createChannel().then(function(ch) {
-            let ex = 'topic_logs';
-            let ok = ch.assertExchange(ex, 'topic', {durable: false});
-
-            ok = ok.then(function() {
-                return ch.assertQueue(queue_name, {exclusive: true});
-            });
-
-            ok = ok.then(function(qok) {
-                let queue = qok.queue;
-
-                return all(keys.map(function(rk) {
-                    ch.bindQueue(queue, ex, rk);
-                })).then(function() {
-                    return queue;
-                });
-            });
-
-            ok = ok.then(function(queue) {
-                return ch.consume(queue, logMessage, {noAck: true});
-            });
-            return ok.then(function() {
-                console.log(' [*] Waiting for logs. To exit press CTRL+C.');
-            });
-
-            function logMessage(msg) {
-                console.log(" [x] %s:'%s'",
-                    msg.fields.routingKey,
-                    msg.content.toString());
-            }
-        });
-    }).catch(console.warn);
-}
