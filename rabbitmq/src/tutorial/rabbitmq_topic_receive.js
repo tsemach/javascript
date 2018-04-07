@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * usage:  ./rabbitmq_broker_receive.js <queue-name> <route key>
- *  for example: ./rabbitmq_broker_receive.js topic.queue '#'
+ * usage:  ./broker_receive.js <queue-name> <route key>
+ *  for example: ./broker_receive.js topic.queue '#'
  */
 
 const amqp = require('amqplib');

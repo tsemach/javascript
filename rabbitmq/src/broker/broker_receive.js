@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * usage:  ./rabbitmq_broker_receive.js <queue-name> <route key>
- *  for example: ./rabbitmq_broker_receive.js topic.queue '#'
+ * usage:  ./broker_receive.js <queue-name> <route key>
+ *  for example: ./broker_receive.js topic.queue '#'
  */
 
 const amqp = require('amqplib');
 const basename = require('path').basename;
 const all = require('bluebird').all;
 const Promise = require('bluebird');
-const config = require('./rabbitmq_broker_config');
+const config = require('./broker_config');
 
 const queue_name = process.argv.slice(2)[0];
 const keys = process.argv.slice(3);

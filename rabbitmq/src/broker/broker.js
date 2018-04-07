@@ -1,44 +1,23 @@
-#!/usr/bin/env node
-
-/**
- * usage:  ./rabbitmq_broker_receive.js <queue-name> <route key>
- *  for example: ./rabbitmq_broker_receive.js topic.queue '#'
- */
 
 const amqp = require('amqplib');
-const basename = require('path').basename;
-const all = require('bluebird').all;
 const Promise = require('bluebird');
-const config = require('./rabbitmq_broker_config');
-
-const queue_name = process.argv.slice(2)[0];
-const keys = process.argv.slice(3);
-if (keys.length < 1) {
-    console.log('Usage: %s pattern [pattern...]',
-        basename(process.argv[1]));
-    process.exit(1);
-}
+const config = require('./broker_config');
 
 class Broker {
 
     constructor() {
-        this.name = "tsemach";
         this.ch = NaN;
+        this.consumes = new Map();
     }
 
-    init() {
-        amqp.connect('amqp://172.17.0.2').then(this.initCB.bind(this));
+    addConsume(queue, cb) {
+        this.consumes.set(queue, cb);
+        this.init();
     }
 
     initConsumeCB(queue) {
         console.log("initConsumeCB: queue = " + JSON.stringify(queue));
-        function logMessage(msg) {
-            console.log(" [x] %s:'%s'",
-                msg.fields.routingKey,
-                msg.content.toString());
-            console.log("msg = %s", JSON.stringify(msg));
-        }
-        return this.ch.consume(queue[0], logMessage, {noAck: true});
+        return this.ch.consume(queue[0], this.consumes.get(queue[0]), {noAck: true});
     }
 
     initBindCB(b) {
@@ -53,6 +32,7 @@ class Broker {
             let needed_binding = config.binding.filter((b) => {if (b.target === q_created.queue) return b;});
 
             return Promise.all(needed_binding.map(this.initBindCB.bind(this))).then(this.initConsumeCB.bind(this))
+            //return Promise.all(needed_binding.map(this.initBindCB.bind(this)));
         };
 
         let createQueue = function(q) {
@@ -85,7 +65,34 @@ class Broker {
 
         return isok.then(this.initQueuesCB.bind(this));
      }
+
+    init() {
+        amqp.connect('amqp://172.17.0.3').then(this.initCB.bind(this));
+
+        return this;
+    }
 }
 
-new Broker().init();
+if (0) {
+    let broker = new Broker();
 
+    broker.addConsume("work.tasks.queue", tasksCB);
+    broker.addConsume("work.events.queue", eventsCB);
+    broker.init();
+
+    function tasksCB(msg) {
+        console.log(" [x] tasksCB: %s:'%s'",
+            msg.fields.routingKey,
+            msg.content.toString());
+        console.log("msg = %s", JSON.stringify(msg));
+    }
+
+    function eventsCB(msg) {
+        console.log(" [x] eventsCB %s:'%s'",
+            msg.fields.routingKey,
+            msg.content.toString());
+        console.log("msg = %s", JSON.stringify(msg));
+    }
+}
+
+module.exports = new Broker;
