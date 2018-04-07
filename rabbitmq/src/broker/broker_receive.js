@@ -9,7 +9,7 @@ const amqp = require('amqplib');
 const basename = require('path').basename;
 const all = require('bluebird').all;
 const Promise = require('bluebird');
-const config = require('./broker_config');
+const config = require('../recorder/recorder_broker_config');
 
 const queue_name = process.argv.slice(2)[0];
 const keys = process.argv.slice(3);
@@ -27,7 +27,7 @@ class Broker {
     }
 
     init() {
-        amqp.connect('amqp://172.17.0.2').then(this.initCB.bind(this));
+        amqp.connect('amqp://172.17.0.3').then(this.initCB.bind(this));
     }
 
     initConsumeCB(queue) {

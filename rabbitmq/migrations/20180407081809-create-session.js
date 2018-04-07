@@ -12,16 +12,22 @@ module.exports = {
         type: Sequelize.STRING
       },
       task: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(1024)
       },
       task_md5: {
         type: Sequelize.UUID
       },
-      event: {
+      task_queue: {
         type: Sequelize.STRING
+      },
+      event: {
+        type: Sequelize.STRING(1024)
       },
       event_md5: {
         type: Sequelize.UUID
+      },
+      event_queue: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

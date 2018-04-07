@@ -1,7 +1,5 @@
 'use strict'
 
-//const connection_params = require('../../config/rabbitmq/rabbitmq');
-
 module.exports = {
         connection: {
             user: process.env.QUEUE_USERNAME,

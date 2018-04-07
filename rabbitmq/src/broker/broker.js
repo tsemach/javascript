@@ -1,11 +1,12 @@
 
 const amqp = require('amqplib');
 const Promise = require('bluebird');
-const config = require('./broker_config');
+const utils = require('../utils/hash');
 
 class Broker {
 
-    constructor() {
+    constructor(config) {
+        this.config = config;
         this.ch = NaN;
         this.consumes = new Map();
     }
@@ -29,7 +30,7 @@ class Broker {
 
         let initQueue = function (q_created) {
             console.log("initQueue: q = " +  JSON.stringify(q_created));
-            let needed_binding = config.binding.filter((b) => {if (b.target === q_created.queue) return b;});
+            let needed_binding = this.config.binding.filter((b) => {if (b.target === q_created.queue) return b;});
 
             return Promise.all(needed_binding.map(this.initBindCB.bind(this))).then(this.initConsumeCB.bind(this))
             //return Promise.all(needed_binding.map(this.initBindCB.bind(this)));
@@ -40,14 +41,14 @@ class Broker {
             return this.ch.assertQueue(q.name, q.options).then(initQueue.bind(this));
         };
 
-        return Promise.all(config.queues.map((q) => createQueue.bind(this)(q)));
+        return Promise.all(this.config.queues.map((q) => createQueue.bind(this)(q)));
     }
 
     initExchangesCB(ch) {
         this.ch = ch;
-        config.exchanges.map((ex) => {console.log("got ex = %s", JSON.stringify(ex))});
+        this.config.exchanges.map((ex) => {console.log("got ex = %s", JSON.stringify(ex))});
 
-        return Promise.all(config.exchanges.map((ex) => {ch.assertExchange(ex.name, ex.type, ex.options)}))
+        return Promise.all(this.config.exchanges.map((ex) => {ch.assertExchange(ex.name, ex.type, ex.options)}))
             .then(() => {
                 console.log("init exchanges ok");
             })
@@ -70,6 +71,23 @@ class Broker {
         amqp.connect('amqp://172.17.0.3').then(this.initCB.bind(this));
 
         return this;
+    }
+
+    send(ex, key, msg) {
+
+        let options = {
+            persistent: false,
+            noAck: true,
+            timestamp: Date.now(),
+            contentEncoding: "utf-8",
+            contentType: "application/json",
+            headers: {
+                messageId: utils.create_hash().toString(),
+                source: ex + ":" + key
+            }
+        };
+
+        this.ch.publish(ex, key, Buffer.from(msg), options);
     }
 }
 
@@ -95,4 +113,4 @@ if (0) {
     }
 }
 
-module.exports = new Broker;
+module.exports = Broker;

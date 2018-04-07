@@ -1,0 +1,17 @@
+# mongodb
+docker run --name db -v /home/tsemach/work/javascript/rabbitmq/database/db:/data/db -d mongo
+docker exec -i db  mongo
+
+# prosgres
+docker volume create pgdata
+docker run -p 5432:5432 --name db -v pgdata:/home/tsemach/work/javascript/rabbitmq/database/db -e POSTGRES_PASSWORD=postgres -d postgres:9.6.6-alpine
+
+
+docker exec db /usr/local/bin/createdb -U postgres loopback
+
+node_modules/.bin/sequelize init
+node_modules/.bin/sequelize  model:generate --name Session --attributes user:string,task:text,task_md5:uuid,event:text,event_md5:uuid
+node_modules/.bin/sequelize db:migrate
+node_modules/.bin/sequelize db:seed:all
+[tsemach@localhost database]$ 
+
