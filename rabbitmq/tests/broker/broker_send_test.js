@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const amqp = require('amqplib');
-const utils = require('../utils/hash');
+const utils = require('../../src/utils/hash');
 
 let key;
 let message;

@@ -2,7 +2,6 @@
 require('dotenv').config();
 
 const Sequelize = require('sequelize');
-const brokerConfig = require('./player_broker_config');
 const Broker = require('../broker/broker');
 
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
@@ -17,9 +16,9 @@ const Session = sequelize.import('../../models/session');
  * 1) send event match the msg.properties.headers.messageId
  */
 class Player {
-    constructor() {
+    constructor(config) {
         this.ison = false;
-        this.broker = new Broker(brokerConfig);
+        this.broker = new Broker(config);
         this.broker.addConsume("work.tasks.queue", this.tasksCB.bind(this));
     }
 

@@ -91,26 +91,4 @@ class Broker {
     }
 }
 
-if (0) {
-    let broker = new Broker();
-
-    broker.addConsume("work.tasks.queue", tasksCB);
-    broker.addConsume("work.events.queue", eventsCB);
-    broker.init();
-
-    function tasksCB(msg) {
-        console.log(" [x] tasksCB: %s:'%s'",
-            msg.fields.routingKey,
-            msg.content.toString());
-        console.log("msg = %s", JSON.stringify(msg));
-    }
-
-    function eventsCB(msg) {
-        console.log(" [x] eventsCB %s:'%s'",
-            msg.fields.routingKey,
-            msg.content.toString());
-        console.log("msg = %s", JSON.stringify(msg));
-    }
-}
-
 module.exports = Broker;
