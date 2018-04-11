@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 
 const amqp = require('amqplib');
-const utils = require('../../src/utils/hash');
+const utils = require('../../../src/utils/hash');
 
 let senderAPI = function() {
 
     let key;
     let message;
     let hash = utils.create_hash().toString();
-    for (let i=0;i<100000; i++);
     let sessionId = utils.create_hash().toString();
     let options = {
         persistent: false,
@@ -109,5 +108,5 @@ let senderAPI = function() {
 
 let sender = senderAPI();
 
-sender.sendTaskAsync();
-sender.sendEventAsync();
+sender.sendTask();
+sender.sendEvent();

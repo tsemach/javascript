@@ -27,11 +27,21 @@ class MessageBuilder {
         let target = this._options;
         keys = keys.split('.');
         keys.forEach(function(key, index) {
-            if (index === keys.length - 1) {
-                target[key] = value;
-            }
-            else {
-                target = target[key];
+            if ( ! (key in target) ) {
+                if ( index === keys.length - 1) {
+                    target[key] = value;
+                }
+                else {
+                    target[key] = {};
+                    target = target[key];
+                }
+            } else {
+                if (index === keys.length - 1) {
+                    target[key] = value;
+                }
+                else {
+                    target = target[key];
+                }
             }
         });
     }
@@ -43,10 +53,16 @@ class MessageBuilder {
         return this._message;
     }
 
-    message(message) {
+    setMessage(message) {
         this.message = message;
     }
 
 }
+
+// m = new MessageBuilder();
+//
+// m.options('headers.exchdange', 'work.ex');
+// m.options('headers.exchange.stam', 'work.ex');
+// console.log(m.getOptions());
 
 module.exports = MessageBuilder;
