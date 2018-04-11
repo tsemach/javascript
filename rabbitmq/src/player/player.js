@@ -54,14 +54,14 @@ class Player {
     }
 
     sendEvent(session) {
-        if (!this.ison) {
+        if ( ! this.ison ) {
             return
         }
 
         // session is ready to sent to event queue by broker.
         // the exchange/key is determine by the session.event_source field.
         let source = session.event_queue.split(':');
-        this.broker.send(source[0], source[1], session.event);
+        this.broker.send(source[0], source[1], session.event, noAck=false);
     }
 }
 

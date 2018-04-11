@@ -2,20 +2,24 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Sessions', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
+      // id: {
+      //   allowNull: false,
+      //   autoIncrement: true,
+      //   primaryKey: true,
+      //   type: Sequelize.INTEGER
+      // },
+      task_md5: {
+          type: Sequelize.UUID,
+          primaryKey: true,
+      },
+      sessionId: {
+        type: Sequelize.UUID,
       },
       user: {
         type: Sequelize.STRING
       },
       task: {
         type: Sequelize.STRING(1024)
-      },
-      task_md5: {
-        type: Sequelize.UUID
       },
       task_queue: {
         type: Sequelize.STRING

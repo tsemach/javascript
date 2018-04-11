@@ -51,14 +51,15 @@ class Recorder {
             out.properties.headers.messageId,
             out.fields.routingKey,
             out.content.toString());
-        console.log("Recorder:tasksCB: [%s] msg = %s", out.properties.headers.messageId, JSON.stringify(out));
+        console.log("Recorder:tasksCB: [%s] msg = %s", out.properties.headers.messageId, JSON.stringify(out, undefined, 2));
         console.log("Recorder:tasksCB: [%s] queue = %s", out.properties.headers.messageId, out.properties.headers.source);
 
         // write the task into the database, zero event_md5 meaning the event for that task is not arrive yet
         let session = Session.build({
+            task_md5: msg.properties.headers.messageId,
+            sessionId: msg.properties.headers.sessionId,
             user: 'tsemach',
             task: JSON.stringify(msg),
-            task_md5: msg.properties.headers.messageId,
             task_queue: msg.properties.headers.source,
             event: "{}",
             event_md5: "00000000000000000000000000000000"
@@ -87,13 +88,13 @@ class Recorder {
                 }
             }).then(function(session) {
                 console.log("");
-                console.log("Recorder:eventCB: [%s] session = %s\n", msg.properties.headers.messageId, JSON.stringify(session));
+                console.log("Recorder:eventCB: [%s-%s] session = %s\n", out.properties.headers.sessionId, msg.properties.headers.messageId, JSON.stringify(session));
                 session.event = JSON.stringify(msg);
                 session.event_md5 = msg.properties.headers.messageId;
                 session.event_queue = msg.properties.headers.source;
                 session.save()
                     .then(function() {
-                        console.log("Recorder:eventCB: [%s] session wrote to db ok", msg.properties.headers.messageId);
+                        console.log("Recorder:eventCB: [%s-%s] session wrote to db ok", out.properties.headers.sessionId, msg.properties.headers.messageId);
                     })
                     .catch(what => console.log("Recorder:eventCB: [%s] Ooops! .. something bad happen - %s", msg.properties.headers.messageId, what));
             });
@@ -101,11 +102,12 @@ class Recorder {
         }, 1000);
 
         console.log("");
-        console.log("Recorder:eventCB: [%s]: eventsCB %s:'%s'",
+        console.log("Recorder:eventCB: [%s-%s]: eventsCB %s:'%s'",
+            out.properties.headers.sessionId,
             out.properties.headers.messageId,
             out.fields.routingKey,
             out.content.toString());
-        console.log("Recorder:eventCB: [%s] msg = %s", out.properties.headers.messageId, JSON.stringify(out));
+        console.log("Recorder:eventCB: [%s] msg = %s", out.properties.headers.messageId, JSON.stringify(out, undefined, 2));
         console.log("");
     }
 }

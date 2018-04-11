@@ -24,6 +24,44 @@ let senderAPI = function() {
     };
 
     return {
+        sendTaskAsync: async function() {
+            let conn = await amqp.connect('amqp://172.17.0.3');
+            let ex = 'work.tasks.exchange';
+            key = 'loopback.tasks';
+
+            let ch = await conn.createChannel();
+
+            await ch.assertExchange(ex, 'topic', {durable: false});
+
+            message = 'Hello World! from task queue';
+            options.headers.source = ex + ":" + key;
+
+            await ch.publish(ex, key, Buffer.from(message), options);
+            console.log(" [%s] Sent %s:'%s'", hash, key, message);
+
+            await ch.close();
+
+            //conn.close();
+        },
+
+        sendEventAsync: async function() {
+
+            let conn = await amqp.connect('amqp://172.17.0.3');
+            let ex = 'work.events.exchange';
+            key = 'tsemach.events';
+
+            let ch = await conn.createChannel();
+
+            await ch.assertExchange(ex, 'topic', {durable: false});
+
+            message = 'Hello World! from event queue';
+            options.headers.source = ex + ":" + key;
+
+            ch.publish(ex, key, Buffer.from(message), options);
+            console.log(" [%s] Sent %s:'%s'", hash, key, message);
+            await ch.close();
+            await conn.close();
+        },
         sendTask: function() {
             amqp.connect('amqp://172.17.0.3').then(function (conn) {
                 return conn.createChannel().then(function (ch) {
@@ -71,5 +109,5 @@ let senderAPI = function() {
 
 let sender = senderAPI();
 
-sender.sendTask();
-sender.sendEvent();
+sender.sendTaskAsync();
+sender.sendEventAsync();

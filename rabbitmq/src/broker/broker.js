@@ -7,8 +7,17 @@ class Broker {
 
     constructor(config) {
         this.config = config;
+        this._noAck = false;
         this.ch = NaN;
         this.consumes = new Map();
+    }
+
+    get noAck() {
+        return this._noAck;
+    }
+
+    set noAck(_noAck) {
+        this._noAck = _noAck;
     }
 
     addConsume(queue, cb) {
@@ -18,7 +27,7 @@ class Broker {
 
     initConsumeCB(queue) {
         console.log("initConsumeCB: queue = " + JSON.stringify(queue));
-        return this.ch.consume(queue[0], this.consumes.get(queue[0]), {noAck: true});
+        return this.ch.consume(queue[0], this.consumes.get(queue[0]), {noAck: !this.noAck});
     }
 
     initBindCB(b) {
@@ -33,7 +42,6 @@ class Broker {
             let needed_binding = this.config.binding.filter((b) => {if (b.target === q_created.queue) return b;});
 
             return Promise.all(needed_binding.map(this.initBindCB.bind(this))).then(this.initConsumeCB.bind(this))
-            //return Promise.all(needed_binding.map(this.initBindCB.bind(this)));
         };
 
         let createQueue = function(q) {
@@ -73,11 +81,11 @@ class Broker {
         return this;
     }
 
-    send(ex, key, msg) {
+    send(ex, key, msg, noAck = true) {
 
         let options = {
             persistent: false,
-            noAck: true,
+            noAck: noAck,
             timestamp: Date.now(),
             contentEncoding: "utf-8",
             contentType: "application/json",

@@ -6,6 +6,8 @@ const utils = require('../../src/utils/hash');
 let key;
 let message;
 let hash = utils.create_hash().toString();
+utils.sleep(100);
+let sessionId = utils.create_hash().toString();
 let options = {
 	persistent: false,
     noAck: true,
@@ -14,6 +16,7 @@ let options = {
     contentType: "application/json",
 	headers: {
 		messageId: hash,
+        sessionId: sessionId,
         source: ""
 	}
 };
