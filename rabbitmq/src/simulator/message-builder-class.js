@@ -1,10 +1,12 @@
 
 const utils = require('../../src/utils/hash');
 
-class MessageBuilder {
+class MessageBuilderClass {
 
-    constructor() {
-        this._message = null;
+    constructor(ex, ky, ms) {
+        this._ex = ex;
+        this._ky = ky;
+        this._message = ms;
         this._options = {
             persistent: false,
             noAck: true,
@@ -12,9 +14,9 @@ class MessageBuilder {
             contentEncoding: "utf-8",
             contentType: "application/json",
             headers: {
-                messageId: "",
-                sessionId: "",
-                source: ""
+                messageId: utils.create_hash(),
+                sessionId: utils.create_hash(),
+                source: ex+":"+ky,
             }
         };
     }
@@ -23,7 +25,7 @@ class MessageBuilder {
         return this._options;
     }
 
-    options(keys, value) {
+    setOptions(keys, value) {
         let target = this._options;
         keys = keys.split('.');
         keys.forEach(function(key, index) {
@@ -57,12 +59,21 @@ class MessageBuilder {
         this.message = message;
     }
 
+    getExchange() {
+        [ex, _] = _options.headers.source.split(':');
+        return ex;
+    }
+
+    getKey() {
+        [_, ky] = _options.headers.source.split(':');
+        return ky;
+    }
 }
 
-// m = new MessageBuilder();
+// m = new MessageBuilderClass('work', 'event.#', "it is me message");
 //
-// m.options('headers.exchdange', 'work.ex');
-// m.options('headers.exchange.stam', 'work.ex');
+// m.setOptions('headers.exchdange', 'work.ex');
+// m.setOptions('headers.exchange.stam', 'work.ex');
 // console.log(m.getOptions());
 
-module.exports = MessageBuilder;
+module.exports = MessageBuilderClass;

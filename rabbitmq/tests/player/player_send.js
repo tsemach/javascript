@@ -3,10 +3,6 @@
 const amqp = require('amqplib');
 const utils = require('../../src/utils/hash');
 
-let key;
-let message;
-let hash = utils.create_hash().toString();
-//let hash = "d31ef19d-a262-4e1d-a179-5f8a234fede2";
 let options = {
 	persistent: false,
     noAck: true,
@@ -14,25 +10,29 @@ let options = {
     contentEncoding: "utf-8",
     contentType: "application/json",
 	headers: {
-		messageId: hash
+		messageId: utils.create_hash().toString(),
+        sessionId: utils.create_hash().toString()
 	}
 };
+function send(ex, ky, ms) {
+    amqp.connect('amqp://172.17.0.3').then(function (conn) {
+        return conn.createChannel().then(function (ch) {
+            let ok = ch.assertExchange(ex, 'topic', {durable: false});
+            return ok.then(function () {
 
-amqp.connect('amqp://172.17.0.3').then(function(conn) {
-    return conn.createChannel().then(function(ch) {
-        let ex = 'work.tasks.exchange';
-        let ok = ch.assertExchange(ex, 'topic', {durable: false});
-        return ok.then(function() {
+                options.headers.source = ex + ":" + ky;
 
-			key = 'loopback.tasks';
-			message = 'Hello World! from task queue';
+                ch.publish(ex, key, Buffer.from(ms), options);
+                console.log(" [x] Sent %s:'%s'", key, ms);
 
-            ch.publish(ex, key, Buffer.from(message), options);
-            console.log(" [x] Sent %s:'%s'", key, message);
-            return ch.close();
-        });
-    }).finally(function() { conn.close(); })
-}).catch(console.log);
+                return ch.close();
+            });
+        }).finally(function () {
+            conn.close();
+        })
+    }).catch(console.log);
+}
+//======================================================================================================================
 
 if (0) {
     amqp.connect('amqp://172.17.0.3').then(function (conn) {

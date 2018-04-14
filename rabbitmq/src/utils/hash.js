@@ -18,28 +18,12 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function create_hash_async(algorithm = 'md5') {
-    await sleep(10);
-    return hasha(Date.now().toString(), {algorithm: algorithm});
-}
-
 function create_hash(algorithm = 'md5') {
-    for (let i = 0; i < 1000000; i++);
-    return hasha(Date.now().toString(), {algorithm: algorithm});
-}
-
-function sleep(milliseconds) {
-    let start = new Date().getTime();
-    for (let i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds){
-            break;
-        }
-    }
+    return hasha(Math.random().toString(), {algorithm: algorithm});
 }
 
 module.exports = {
     create_hash,
-    create_hash_async,
     sleep
 }
 

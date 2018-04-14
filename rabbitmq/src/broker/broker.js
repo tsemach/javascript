@@ -3,6 +3,17 @@ const amqp = require('amqplib');
 const Promise = require('bluebird');
 const utils = require('../utils/hash');
 
+/**
+ * @class class for using rabbitmq.
+ *  using:
+ *      broker = new Broker(config);
+ *      broker.addTaskListener(queue-name, callback);
+ *      broker.addEventListener(queue-name, callback);
+ *
+ *      callback(msg) {
+ *          ...
+ *      }
+ */
 class Broker {
 
     constructor(config) {
@@ -81,9 +92,9 @@ class Broker {
         return this;
     }
 
-    send(ex, key, msg, noAck = true) {
+    send(ex, key, msg, options = null, noAck = true) {
 
-        let options = {
+        let _options = {
             persistent: false,
             noAck: noAck,
             timestamp: Date.now(),
@@ -94,6 +105,8 @@ class Broker {
                 source: ex + ":" + key
             }
         };
+
+        options = options === null ? _options : options;
 
         this.ch.publish(ex, key, Buffer.from(msg), options);
     }

@@ -1,5 +1,5 @@
 
-const Broker = require('../../src/broker/broker');
+const Broker = require('../../../src/broker/broker');
 
 /**
  * @description this module run the broker as a Recevier. It define a configuration object listen to two queues,
@@ -24,16 +24,16 @@ let config = {
         name: "rabbitmq"
     },
     exchanges: [
-        {name: "work.tasks.exchange", type: "topic", options: {publishTimeout: 1000, persistent: true, durable: false}},
-        {name: "work.events.exchange", type: "topic", options: {publishTimeout: 1000, persistent: true, durable: false}}
+        {name: "receiver.tasks.exchange", type: "topic", options: {publishTimeout: 1000, persistent: true, durable: false}},
+        {name: "receiver.events.exchange", type: "topic", options: {publishTimeout: 1000, persistent: true, durable: false}}
     ],
     queues: [
-        {name: "work.tasks.queue", options: {limit: 1000, queueLimit: 1000}},
-        {name: "work.events.queue", options: {limit: 1000, queueLimit: 1000}}
+        {name: "receiver.tasks.queue", options: {limit: 1000, queueLimit: 1000}},
+        {name: "receiver.events.queue", options: {limit: 1000, queueLimit: 1000}}
     ],
     binding: [
-        {exchange: "work.tasks.exchange", target: "work.tasks.queue", keys: "loopback.#"},
-        {exchange: "work.events.exchange", target: "work.events.queue", keys: "tsemach.#"}
+        {exchange: "receiver.tasks.exchange", target: "receiver.tasks.queue", keys: "tasks.#"},
+        {exchange: "receiver.events.exchange", target: "receiver.events.queue", keys: "events.#"}
     ],
     logging: {
         adapters: {
@@ -49,8 +49,8 @@ class Receiver {
     constructor() {
         this.ison = false;
         this.broker = new Broker(config);
-        this.broker.addConsume("work.tasks.queue", this.taskCB.bind(this));
-        this.broker.addConsume("work.events.queue", this.eventsCB.bind(this));
+        this.broker.addConsume("receiver.tasks.queue", this.taskCB.bind(this));
+        this.broker.addConsume("receiver.events.queue", this.eventsCB.bind(this));
     }
 
     receive(ison) {

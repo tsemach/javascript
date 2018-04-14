@@ -35,7 +35,7 @@ let senderAPI = function() {
                         message = 'Hello World! from task queue';
                         options.headers.source = ex + ":" + key;
 
-                        ch.publish(ex, key, Buffer.from(message), options);
+                            ch.publish(ex, key, Buffer.from(message), options);
                         console.log(" [%s] Sent %s:'%s'", hash, key, message);
                         return ch.close();
                     });

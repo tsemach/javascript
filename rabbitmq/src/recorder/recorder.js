@@ -30,14 +30,14 @@ class Recorder {
         this.broker.addConsume(queue, this.eventsCB.bind(this));
     }
 
-    fixContent(msg) {
-        // clone msg since make changes for debug, keep the original msg.
-        let out = Object.assign({}, msg);
-
-        out.content = {data: "string", content: msg.content.toString()};
-
-        return out;
-    }
+    // fixContent(msg) {
+    //     // clone msg since make changes for debug, keep the original msg.
+    //     let out = Object.assign({}, msg);
+    //
+    //     out.content = {data: "string", content: msg.content.toString()};
+    //
+    //     return out;
+    // }
 
     tasksCB(msg) {
         if ( ! this.ison ) { return }

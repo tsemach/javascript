@@ -1,16 +1,6 @@
 'use strict'
 
 module.exports = {
-    simulate: {
-        exchanges: {
-            tasks: "service-a.tasks.exchange",
-            events: "service-a.events.exchange"
-        },
-        queues: {
-            tasks: "service-a.tasks.queue",
-            events: "service-a.events.queue"
-        }
-    },
     broker: {
         connection: {
             user: process.env.QUEUE_USERNAME,
@@ -30,7 +20,7 @@ module.exports = {
         ],
         binding: [
             {exchange: "service-a.tasks.exchange", target: "service-a.tasks.queue", keys: "tasks.#"},
-            {exchange: "service-a.events.exchange", target: "service-a.events.queue", keys: "events.#"}
+            {exchange: "service-a.events.exchange", target: "service-a.events.queue", keys: "events.#"},
         ],
         logging: {
             adapters: {
@@ -42,3 +32,4 @@ module.exports = {
         }
     }
 };
+

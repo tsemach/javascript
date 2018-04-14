@@ -1,5 +1,6 @@
 
-require('dotenv').config();
+const appRoot = require('app-root-path');
+require('dotenv').config(appRoot + '/.env');
 
 const Sequelize = require('sequelize');
 const Broker = require('../broker/broker');
@@ -61,8 +62,8 @@ class Player {
         // session is ready to sent to event queue by broker.
         // the exchange/key is determine by the session.event_source field.
         let source = session.event_queue.split(':');
-        this.broker.send(source[0], source[1], session.event, noAck=false);
+        this.broker.send(source[0], source[1], session.event, options=null, noAck=false);
     }
 }
 
-module.exports = new Player();
+module.exports = Player;

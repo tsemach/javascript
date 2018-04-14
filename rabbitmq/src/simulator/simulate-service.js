@@ -1,27 +1,33 @@
+const Broker = require('../broker/broker');
 
+/**
+ * @class
+ * @constructor define two maps objects
+ *      this.tasks: look by the messageId on the incoming task for the message needs to send
+ *      this.events: look by the messageId on the incoming event for the message needs to send
+ */
 class SimulateService  {
-    constructor() {
-        this.messages = {tasks: new Map(), events: new Map()};
-
-        this.messages.tasks['a'] = 'a';
-        console.log(this.messages.tasks['a']);
+    constructor(config) {
+        this.tasks = new Map();
+        this.events = new Map();
+        this.broker = new Broker(config);
     }
 
-    addTasksMessage(what, message) {
-        this.messages.tasks.set(what, message);
+    addTaskListener(queue, handler) {
+        this.broker.addConsume(queue, handler);
     }
 
-    addEventsMessage(what, message) {
-        this.messages.events.set(what, message);
+    addEventListener(queue, handler) {
+        this.broker.addConsume(queue, handler);
     }
 
-    sendTasks() {
+    addTasksMessage(messageId, task) {
+        this.tasks.set(messageId, task);
+    }
 
+    addEventsMessage(eventId, event) {
+        this.events.set(eventId, event);
     }
 }
-s = new SimulateService();
 
-s.addTasksMessage('a', 'task message');
-console.log(s.messages.tasks.get('a'));
-
-
+module.exports = SimulateService;
