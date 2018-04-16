@@ -75,7 +75,7 @@ class Recorder {
         let out = Object.assign({}, msg);
 
         out.content = {data: "string", content: msg.content.toString()};
-
+        
         // temporary: need to replace by promise. of the write of the msg in the taskCB happen *too fast* then the
         // data will not be ready for ready and update the event of that specific task
         setTimeout(function() {

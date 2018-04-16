@@ -69,15 +69,17 @@ class Receiver {
         console.log("taskCB: [%s] msg = %s", msg.properties.headers.messageId, JSON.stringify(msg));
         console.log("");
 
-        let message = messageBuilder();
+        let message = messageBuilder('receiver');
         message.build('service-b.events.exchange', 'events.#', "event-1: receiver send event to service-b");
+        message.addOpaque(msg.properties.headers.opaque);
+        message.adjustMessageId('service-b');
 
         let ex = message.getExchange();
         let ky = message.getKey();
         let op = message.getOptions();
         let by = message.getMessage();
 
-        console.log("Receiver:eventCB: going to send <" + by + "> " + ex + ":" + ky);
+        console.log("Receiver:taskCB: going to send <" + by + "> " + ex + ":" + ky);
 
         this.broker.send(ex, ky, by, op);
     }

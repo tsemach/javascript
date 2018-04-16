@@ -2,6 +2,17 @@ const express = require('express');
 const router = express.Router();
 const request = require('superagent');
 
+/**
+ * This code is an example of sending a http request receive a response with in another http session.
+ *
+ * First post request http://localhots:3000/promise come in to route point router.post('/token', ...);
+ * Then before send a reply back to client another request is generating using superagent l
+ * ibrary to http://localhost:3000/promise/token. once reply is coming in (with the .end method) the
+ * the reply to the "original" first request is send to the client using the promiseRes response object.
+ *
+ * @param promiseRes
+ */
+
 function getToken(promiseRes) {
     request
         .post('http://localhost:3000/promise/token')

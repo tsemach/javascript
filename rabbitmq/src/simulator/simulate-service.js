@@ -8,9 +8,18 @@ const Broker = require('../broker/broker');
  */
 class SimulateService  {
     constructor(config) {
+        this._name = '';
         this.tasks = new Map();
         this.events = new Map();
         this.broker = new Broker(config);
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    set name(_name) {
+        this._name = _name;
     }
 
     addTaskListener(queue, handler) {

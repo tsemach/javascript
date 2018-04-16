@@ -1,7 +1,7 @@
 
 const utils = require('../utils/hash');
 
-let MessageBuilderClouser = function() {
+let MessageBuilderClouser = function(name) {
     let _options = {
         persistent: false,
         noAck: true,
@@ -11,7 +11,8 @@ let MessageBuilderClouser = function() {
         headers: {
             messageId: utils.create_hash(),
             sessionId: utils.create_hash(),
-            source: ""
+            source: '',
+            opaque: {}
         }
     };
 
@@ -34,6 +35,10 @@ let MessageBuilderClouser = function() {
         getKey: function() {
             [_, ky] = _options.headers.source.split(':');
             return ky;
+        },
+
+        getOpaque() {
+            return _options.headers.opaque;
         },
 
         setOptions: function(keys, value) {
@@ -62,12 +67,24 @@ let MessageBuilderClouser = function() {
         build: function (ex, ky, ms) {
             _message = Buffer.from(ms, 'utf8');
             _options.headers.source = ex + ":" + ky;
+            _options.headers.opaque[name] = {messageId: _options.headers.messageId};
+        },
+
+        adjustMessageId(_name) {
+            _options.headers.messageId = _options.headers.opaque[_name].messageId;
+        },
+
+        addOpaque(_other) {
+            _options.headers.opaque = Object.assign({}, _options.headers.opaque, _other);
         }
     }
 }
 
-builder = MessageBuilderClouser();
+// builder = MessageBuilderClouser('service-a');
+//
+//
 // builder.build('ex', 'ky', "it is me");
+// builder.adjustMessageId('service-a');
 //
 // console.log(builder.getOptions());
 // console.log(builder.getMessage().toString());

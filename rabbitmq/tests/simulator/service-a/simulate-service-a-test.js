@@ -7,13 +7,14 @@ class SimulateServiceA extends SimulateService {
 
     constructor() {
         super(config.broker);
+        this.name = 'service-a';
 
         this.addTaskListener('service-a.tasks.queue', this.taskCB.bind(this));
         this.addEventListener('service-a.events.queue', this.eventCB.bind(this));
 
         let message;
 
-        message = messageBuilder();
+        message = messageBuilder('service-a');
         message.build('service-b.tasks.exchange', 'tasks.#', "task-1: service-a send task to service-b");
         this.addTasksMessage("task-1", message);
 
