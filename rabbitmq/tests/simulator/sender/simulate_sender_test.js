@@ -74,4 +74,4 @@ let senderAPI = function() {
 let sender = senderAPI();
 
 sender.sendTask();
-sender.sendEvent();
+//sender.sendEvent();

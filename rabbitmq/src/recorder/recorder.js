@@ -14,8 +14,6 @@ class Recorder {
     constructor(config) {
         this.ison = false;
         this.broker = new Broker(config);
-        //this.broker.addConsume("work.tasks.queue", this.tasksCB.bind(this));
-        //this.broker.addConsume("work.events.queue", this.eventsCB.bind(this));
     }
 
     record(ison) {
@@ -47,10 +45,9 @@ class Recorder {
 
         out.content = {data: "string", content: msg.content.toString()};
         console.log("");
-        console.log("Recorder:tasksCB: [%s]: tasksCB: %s:'%s'",
+        console.log("Recorder:tasksCB: [%s]: called: %s",
             out.properties.headers.messageId,
-            out.fields.routingKey,
-            out.content.toString());
+            out.fields.routingKey);
         console.log("Recorder:tasksCB: [%s] msg = %s", out.properties.headers.messageId, JSON.stringify(out, undefined, 2));
         console.log("Recorder:tasksCB: [%s] queue = %s", out.properties.headers.messageId, out.properties.headers.source);
 

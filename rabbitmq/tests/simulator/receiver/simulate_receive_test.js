@@ -1,5 +1,6 @@
 
 const Broker = require('../../../src/broker/broker');
+const messageBuilder = require('../../../src/simulator/message-builder-clouser');
 
 /**
  * @description this module run the broker as a Recevier. It define a configuration object listen to two queues,
@@ -67,6 +68,18 @@ class Receiver {
             msg.content.toString());
         console.log("taskCB: [%s] msg = %s", msg.properties.headers.messageId, JSON.stringify(msg));
         console.log("");
+
+        let message = messageBuilder();
+        message.build('service-b.events.exchange', 'events.#', "event-1: receiver send event to service-b");
+
+        let ex = message.getExchange();
+        let ky = message.getKey();
+        let op = message.getOptions();
+        let by = message.getMessage();
+
+        console.log("Receiver:eventCB: going to send <" + by + "> " + ex + ":" + ky);
+
+        this.broker.send(ex, ky, by, op);
     }
 
     eventsCB(msg) {
