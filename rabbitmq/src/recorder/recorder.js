@@ -28,15 +28,6 @@ class Recorder {
         this.broker.addConsume(queue, this.eventsCB.bind(this));
     }
 
-    // fixContent(msg) {
-    //     // clone msg since make changes for debug, keep the original msg.
-    //     let out = Object.assign({}, msg);
-    //
-    //     out.content = {data: "string", content: msg.content.toString()};
-    //
-    //     return out;
-    // }
-
     tasksCB(msg) {
         if ( ! this.ison ) { return }
 
@@ -51,9 +42,12 @@ class Recorder {
         console.log("Recorder:tasksCB: [%s] msg = %s", out.properties.headers.messageId, JSON.stringify(out, undefined, 2));
         console.log("Recorder:tasksCB: [%s] queue = %s", out.properties.headers.messageId, out.properties.headers.source);
 
+        let from = msg.fields.exchange.split('.')[0];
+
         // write the task into the database, zero event_md5 meaning the event for that task is not arrive yet
         let session = Session.build({
-            task_md5: msg.properties.headers.messageId,
+            //task_md5: msg.properties.headers.messageId,
+            task_md5: msg.properties.headers.opaque[from].messageId,
             sessionId: msg.properties.headers.sessionId,
             user: 'tsemach',
             task: JSON.stringify(msg),
@@ -75,7 +69,9 @@ class Recorder {
         let out = Object.assign({}, msg);
 
         out.content = {data: "string", content: msg.content.toString()};
-        
+
+        let from = msg.fields.exchange.split('.')[0];
+
         // temporary: need to replace by promise. of the write of the msg in the taskCB happen *too fast* then the
         // data will not be ready for ready and update the event of that specific task
         setTimeout(function() {
@@ -87,7 +83,8 @@ class Recorder {
                 console.log("");
                 console.log("Recorder:eventCB: [%s-%s] session = %s\n", out.properties.headers.sessionId, msg.properties.headers.messageId, JSON.stringify(session));
                 session.event = JSON.stringify(msg);
-                session.event_md5 = msg.properties.headers.messageId;
+                //session.event_md5 = msg.properties.headers.messageId;
+                session.event_md5 = msg.properties.headers.opaque[from].messageId;
                 session.event_queue = msg.properties.headers.source;
                 session.save()
                     .then(function() {
