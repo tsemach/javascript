@@ -3,7 +3,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Sessions', {
       // id: {
-      //   allowNull: false,
+      //    : false,
       //   autoIncrement: true,
       //   primaryKey: true,
       //   type: Sequelize.INTEGER

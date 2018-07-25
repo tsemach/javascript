@@ -10,7 +10,7 @@ docker run -p 5432:5432 --name db -v pgdata:/home/tsemach/work/javascript/rabbit
 docker exec db /usr/local/bin/createdb -U postgres loopback
 
 node_modules/.bin/sequelize init
-node_modules/.bin/sequelize  model:generate --name Session --attributes user:string,task:text,task_md5:uuid,event:text,event_md5:uuid
+node_modules/.bin/sequelize model:generate --name Session --attributes user:string,task:text,task_md5:uuid,event:text,event_md5:uuid
 node_modules/.bin/sequelize db:migrate
 node_modules/.bin/sequelize db:seed:all
 [tsemach@localhost database]$ 
